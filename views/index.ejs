@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Esri Gnip Loader</title>
+    <link rel='SHORTCUT ICON' href='/favicon.ico'>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.1/css/bootstrapValidator.min.css"/>
+    <link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.10/js/esri/css/esri.css">   
+    <link rel="stylesheet" type="text/css" href="//esri.github.io/bootstrap-map-js/src/css/bootstrapmap.css">   
+    <link rel="stylesheet" type="text/css" href="/css/jquery.datetimepicker.css"/ >
+    <link rel="stylesheet" type="text/css" href="/css/sweet-alert.css">
+
+    <style type="text/css">
+      #lastPanel {
+        margin-bottom: 0px;
+      }
+      .placeholder, .form-control::-webkit-input-placeholder { color: #bbb; }
+      .searchclear {
+        position:absolute;
+        right:25px;
+        top:0;
+        bottom:0;
+        height:14px;
+        margin:auto;
+        margin-top: 10px;
+        font-size:14px;
+        cursor:pointer;
+        color:#ccc;
+      }
+
+      #queryMap {
+        min-height:400px; 
+        max-height:400px; 
+      }
+
+      @media (max-width: 600px) {
+        #queryMap {
+          width: 250px;
+          min-height:250px; 
+          max-height:250px; 
+        }
+      }
+
+      #esriNewFSName, #esriNewFSCreate {
+        height: 22px;
+        line-height: 1;
+      }
+
+      #esriNewFSGroup, #gnipSettingsSummary {
+        margin-right: 15px;
+      }
+
+      #signInStatus {
+        font-size: small; 
+        padding-left: 0.5em;
+      }
+
+      .strikeout {
+        text-decoration: line-through;
+      }
+
+      .hidden-on-start {
+        display: none;
+      }
+
+      .form-group:last-of-type {
+        margin-bottom: 0px !important;
+      }
+
+      .form-control-feedback {
+        top: 0;
+        right: -15px;
+      }
+
+      #queryResultsPanel {
+        margin-top: 10px;
+      }
+
+      #queryResultsPanel .alert, #queryResultsPanel table {
+        margin-bottom: 0px;
+      }
+
+      .alert .title {
+        font-weight: bold;
+      }
+
+      .spinner-backing {
+        position: absolute;
+        left: 50%; 
+        top: 35%; 
+        width: 200px; 
+        height: 200px; 
+        margin-left: -100px;
+        margin-top: -100px;
+        background-color: rgba(0, 0, 0, 0.4);
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+      }
+
+      .spinner-message {
+        display: block;
+        position: absolute;
+        left: 50%;
+        margin-left: -90px;
+        width: 180px;
+        text-align: center;
+        color: white;
+        bottom: 12%;
+      }
+
+      #gnipPasswordSolo {
+        height: 102px;
+        font-size: 42px;
+      }
+
+      #gnipPasswordModal {
+        top: 200px;
+      }
+
+      #gnipUsernameSolo {
+        font-size: 14px;
+      }
+
+      #gnipPasswordModal .panel-heading {
+        font-size: 28px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="modal fade" id="modalSpinner" tabindex="-1" role="dialog" aria-labelledby="countModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="width: 100%; height: 100%;">
+        <div class="spinner-backing">
+          <span class="spinner-message"></span>
+        </div>
+      </div>
+    </div>
+  
+
+    <!-- Gnip Password Only -->
+    <div class="modal fade" id="gnipPasswordModal" tabindex="-1" role="dialog" aria-labelledby="countModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content panel panel-primary">
+          <div class="panel-body">
+
+            <form class="form-horizontal" id="gnipPasswordForm">
+
+              <div class="form-group">
+                <div class="col-sm-12">
+                  <input type="password" id="gnipPasswordSolo" name="gnipPasswordSolo"
+                    class="form-control" 
+                    value="" placeholder="gnip password please"
+                    data-bv-notempty="true"
+                    >
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gnip Modal -->
+    <div class="modal fade" id="gnipSettingsModal" tabindex="-1" role="dialog" aria-labelledby="countModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content panel panel-primary">
+          <div class="panel-heading">Gnip Login and Account Info</div>
+          <div class="panel-body">
+
+            <form class="form-horizontal" id="gnipForm">
+
+              <div class="form-group">
+                <label class="col-sm-3 control-label" for="gnipUsername">Username</label>
+                <div class="col-sm-9"> <!-- Why the sizing all borked?? -->
+                  <input type="email" id="gnipUsername" name="gnipUsername" spellcheck="false" 
+                    class="form-control" 
+                    value="" placeholder="me@myplace.com"
+                    data-bv-notempty="true"
+                    >
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label" for="gnipPassword">Password</label>
+                <div class="col-sm-9">
+                  <input type="password" id="gnipPassword" name="gnipPassword"
+                    class="form-control" 
+                    value="" placeholder="shhhhhh"
+                    data-bv-notempty="true"
+                    >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-sm-3 control-label" for="gnipAccount">Account</label>
+                <div class="col-sm-9">
+                  <input type="text" id="gnipAccount" name="gnipAccount" spellcheck="false"
+                    class="form-control" 
+                    value="" placeholder="Account"
+                    data-bv-notempty="true"
+                    >
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label" for="gnipStream">Stream</label>
+                <div class="col-sm-9">
+                  <input type="text" id="gnipStream" name="gnipStream" spellcheck="false"
+                    class="form-control" 
+                    value="" placeholder="Stream"
+                    data-bv-notempty="true"
+                    >
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="col-sm-12">
+                  <button type="submit" class="btn btn-primary pull-right col-sm-2" id="gnipSettingsOK">OK</button>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Query Modal -->
+    <div class="modal fade" id="queryModal" tabindex="-1" role="dialog" aria-labelledby="queryModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="queryModalLabel">Query</h4>
+          </div>
+
+          <div class="modal-body">
+
+            <!-- Query in progress -->
+            <div id="queryProgress" class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span>Querying…</span>
+              </div>
+            </div>
+
+            <!-- Warning -->
+            <div class="alert alert-warning" role="alert" id="queryProgressAlert">
+              <span class="title">Trouble getting progress update</span>
+              <span class="message"></span>
+            </div>
+
+            <!-- Error -->
+            <div class="alert alert-danger" role="alert" id="queryAlert">
+              <span class="title">Error publishing query results</span>
+              <span class="message"></span>
+            </div>
+
+            <!-- Query Results -->
+            <!-- Nav tabs -->
+            <div id="queryResults">
+
+              <ul class="nav nav-pills" role="tablist">
+                <li class="active"><a href="#queryMapped" role="tab" data-toggle="tab" id="queryMapTab">Mapped <span class="badge"></span></a></li>
+                <li><a href="#queryUnlocatable" role="tab" data-toggle="tab" id="queryUnlocTab">Unlocatable <span class="badge"></span></a></li>
+                <li><a href="#queryErrors" role="tab" data-toggle="tab" id="queryErrorTab">Errors <span class="badge"></span></a></li>
+              </ul>
+
+              <!-- Tab panes -->
+              <div class="panel panel-default" id="queryResultsPanel">
+                <div class="panel-body">
+
+                  <div class="tab-content">
+
+                    <div class="tab-pane fade in active" id="queryMapped">
+                      <div id="queryMap" class="result-map"></div>
+                    </div>
+                    <div class="tab-pane fade" id="queryUnlocatable">
+                      <div class="content">
+                      </div>
+                      <div class="alert alert-success" role="alert" id="queryNoUnlocatableAlert">
+                        <span class="message">All records returned by Gnip were successfully geolocated.</span>
+                      </div>
+                    </div>
+                    <div class="tab-pane fade" id="queryErrors">
+                      <div class="content">
+                      </div>
+                      <div class="alert alert-success" role="alert" id="queryNoErrorsAlert">
+                        <span class="message">All geolocated records were translated and stored OK.</span>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+          </div> <!-- Modal Body -->
+          
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Count Modal -->
+    <div class="modal fade" id="countModal" tabindex="-1" role="dialog" aria-labelledby="countModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="countModalLabel">Count</h4>
+          </div>
+          <div class="modal-body">
+
+            <div id="countProgress" class="progress">
+              <div class="progress-bar progress-bar-info progress-bar-striped active"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span>Counting...</span>
+              </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div class="alert alert-danger" role="alert" id="estimateAlert">
+              <span class="title">Error getting an estimate</span>
+              <span class="message"></span>
+            </div>
+
+            <pre id="countResult"></pre>
+            </pre>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- Main page content -->
+    <div class="container main">
+      
+      <div class="page-header hidden-xs">
+        <h2> Esri Gnip Loader <small>Push Gnip query results to a Feature Service</small></h2>
+      </div>
+
+      <!-- Query Panel -->
+      <div class="row">
+        <div class="col-sm-12">
+
+          <div class="panel panel-primary" id="queryPanel">
+
+            <div class="panel-heading">Query
+              <div class="input-group input-group-sm pull-right" id="gnipSettingsSummaryContainer">
+                <span id="gnipSettingsSummary" class="hidden-on-start small"></span>
+                <div class="btn-group pull-right hidden-on-start" id="gnipSettingsEdit">
+                  <button class="btn btn-info btn-xs"><span id="gnipUsernameDisplay"></span></button>
+                  <button class="btn btn-info btn-xs dropdown-toggle" type="button" data-toggle="dropdown"><span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" onClick="editGnipSettings()">Edit Gnip Settings</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <form id="queryForm" method="post" class="form-horizontal"
+                  data-bv-message="This value is not valid"
+                  data-bv-live="disabled"
+                  >
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="gnipQuery">Query</label>
+                  <div class="col-sm-10">
+                    <input type="text" id="gnipQuery" name="gnipQuery" spellcheck="false"
+                      class="form-control" 
+                      value="" placeholder="Enter your Gnip query text"
+                      data-bv-notempty="true"
+                      data-bv-notempty-message="The query is required and cannot be empty"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="gnipFromDate">From</label>
+                  <div class="col-sm-4 validation-limiter">
+                    <input type="datetime" id="gnipFromDate" name="gnipFromDate" 
+                      class="form-control" 
+                      value="" placeholder="12:00am, 30 days ago (UTC)"
+                      data-bv-group=".validation-limiter"
+                      data-bv-callback="true"
+                      data-bv-callback-callback="validateDate"
+                      data-validation-name="Start Date">
+                    <span class="searchclear glyphicon glyphicon-remove-circle"></span>
+                  </div>
+
+                  <label class="col-sm-2 control-label" for="gnipToDate">Until</label>
+                  <div class="col-sm-4 validation-limiter">
+                    <input type="datetime" id="gnipToDate" name="gnipToDate"
+                      class="form-control" 
+                      value="" placeholder="Now" 
+                      data-bv-group=".validation-limiter"
+                      data-bv-callback="true"
+                      data-bv-callback-callback="validateDate"
+                      data-validation-name="End Date">
+                    <span class="searchclear glyphicon glyphicon-remove-circle"></span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-12 pull-right">
+                    <!-- Estimate button -->
+                    <div class="btn-group pull-right" id="gnipEstimateButton">
+                      <button type="button" class="btn btn-primary" id="gnipEstimateShortcut"
+                        onClick="estimateCount()" data-bucketsize="day">Estimate (Days)</button>
+                      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a onClick="setBucketSize()" data-bucketsize="day">Days</a></li>
+                        <li><a onClick="setBucketSize()" data-bucketsize="hour">Hours</a></li>
+                        <li><a onClick="setBucketSize()" data-bucketsize="minute">Minutes</a></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Action Row -->
+      <div class="row">
+
+        <!-- Query and Push -->
+        <div class="col-sm-12">
+          <div class="panel panel-primary" id="lastPanel">
+
+            <div class="panel-heading">Push to Feature Service
+              <span id="signInStatus" class="hidden-on-start"></span>
+
+              <button type="button" class="btn btn-info btn-xs pull-right hidden-on-start" onClick="doOAuth()" id="esriSignIn">sign In</button>
+
+              <div class="btn-group pull-right hidden-on-start" id="esriSignOut">
+                <button class="btn btn-info btn-xs"><span id="esriUsername"></span></button>
+                <button class="btn btn-info btn-xs dropdown-toggle" type="button" data-toggle="dropdown"><span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#" onClick="signOut()">Sign out</a></li>
+                </ul>
+              </div>
+              
+              <div class="input-group input-group-sm col-sm-4 pull-right" style="display: none;" id="esriNewFSGroup">
+                <input type="text" class="form-control" spellcheck="false" placeholder="New Feature Service" id="esriNewFSName">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" id="esriNewFSCreate" onClick="createFS()">Create</button>
+                </span>
+              </div>
+            </div>
+
+            <div class="panel-body">
+              <form id="esriForm" class="form-horizontal" method="post"
+                data-bv-message="This value is not valid"
+                data-bv-live="disabled"
+                >
+
+                <div class="form-group">
+                  <label class="col-sm-1 control-label" for="esriUrl">URL</label>
+                  <div class="col-sm-11">
+                    <input type="text" id="esriUrl" name="esriUrl" spellcheck="false"
+                      class="form-control" 
+                      value="" placeholder="http://services.arcgis.com/…/arcgis/rest/services/Gnip/FeatureServer/0"
+                      data-bv-notempty="true"
+                      data-bv-notempty-message="A target feature service is required"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-6"></div>
+                  <label class="col-sm-2 control-label" for="gnipMaxRecords">Max Records</label>
+                  <div class="col-sm-4">
+                    <input type="datetime" id="gnipMaxRecords" class="form-control" value="" placeholder="All available">
+                    <span class="searchclear glyphicon glyphicon-remove-circle"></span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-12">
+                    <button type="button" class="btn btn-primary pull-right" id="queryAndPushButton" onClick="queryAndPush()">Query and Push</button>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.1/js/bootstrapValidator.min.js"></script>
+    <!-- 
+      We make use of the following awesome plugins:
+        https://github.com/mathiasbynens/jquery-placeholder
+        https://github.com/carhartl/jquery-cookie
+        http://xdsoft.net/jqplugins/datetimepicker/
+    -->
+
+    <script src="/js/jquery.cookie.js"></script>
+    <script src="/js/jquery.datetimepicker.js"></script>
+    <script src="/js/jquery.placeholder.js"></script>
+    <script src="/js/lodash.min.js"></script>
+    <script src="/js/moment.min.js"></script>
+    <script src="/js/spin.min.js"></script>
+    <script src="/js/jquery.spin.js"></script>
+    <script src="/js/sweet-alert.min.js"></script>
+
+    <script src="/js/amd.prep.js"></script>
+    <script src="//js.arcgis.com/3.10compact"></script>
+
+    <script src="/js/app.js"></script>
+
+    <script src="/js/ui.js"></script>
+    <script src="/js/gnip-ui.js"></script>
+    <script src="/js/esri-ui.js"></script>
+    <script src="/js/ui-handlers.js"></script>
+
+    <script src="/js/validation.js"></script>
+
+    <script src="/js/authenticate.js"></script>
+    <script type="text/javascript">
+      setEnv('<%= env %>');
+      setClientId('<%= clientId %>');
+      setMock('<%= mock %>');
+    </script>
+
+    <script src="/js/map.js"></script>
+    <script src="/js/portal-utils.js"></script>
+
+    <script src="/js/init-ui.js"></script>
+  </body>
+</html>

@@ -1,0 +1,59 @@
+{
+  "name": "GnipPostman",
+  "serviceDescription" : "Gnip Storage Layer", 
+  "hasVersionedData" : false, 
+  "supportsDisconnectedEditing" : false, 
+  "hasStaticData" : false, 
+  "maxRecordCount" : 2000, 
+  "supportedQueryFormats" : "JSON", 
+  "capabilities" : "Create,Delete,Query,Update,Editing,Sync", 
+  "description" : "Storage Layer for Gnip query results", 
+  "copyrightText" : "Esri 2014", 
+  "spatialReference" : {
+    "wkid" : 102100, 
+    "latestWkid" : 3857
+  }, 
+  "initialExtent" : {
+    "xmin" : -14382250.249473669, 
+    "ymin" : 9979520.5812674612, 
+    "xmax" : 45560098.86284516, 
+    "ymax" : 56681067.876610525, 
+    "spatialReference" : {
+      "wkid" : 102100, 
+      "latestWkid" : 3857
+    }
+  }, 
+  "fullExtent" : {
+    "xmin" : -20037507.842788249, 
+    "ymin" : -30240971.458386172, 
+    "xmax" : 20037507.842788249, 
+    "ymax" : 30240971.458386205, 
+    "spatialReference" : {
+      "wkid" : 102100, 
+      "latestWkid" : 3857
+    }
+  }, 
+  "allowGeometryUpdates" : true, 
+  "units" : "esriMeters", 
+  "syncEnabled" : true, 
+  "syncCapabilities" : {
+    "supportsAsync" : true, 
+    "supportsRegisteringExistingData" : true, 
+    "supportsSyncDirectionControl" : true, 
+    "supportsPerLayerSync" : true, 
+    "supportsPerReplicaSync" : true, 
+    "supportsRollbackOnFailure" : true
+  }, 
+  "editorTrackingInfo" : {
+    "enableEditorTracking" : false, 
+    "enableOwnershipAccessControl" : false, 
+    "allowOthersToUpdate" : true, 
+    "allowOthersToDelete" : false
+  }, 
+  "xssPreventionInfo" : {
+    "xssPreventionEnabled" : true, 
+    "xssPreventionRule" : "InputOnly", 
+    "xssInputRule" : "rejectInvalid"
+  }, 
+  "tables" : []
+}
