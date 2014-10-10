@@ -133,7 +133,15 @@ The Client ID is found in the OAuth Credentials section of your new application'
 
 ![OAuth Client ID](docs/oauth-client-id.png)
 
-esri-gnip-loader will read the `CLIENT_ID` environment variable to determine how to identify itself to ArcGIS Online when performing OAuth authentication. You can either define a global environment variable on your system or run esri-gnip-loader with an environment variable override:
+esri-gnip-loader will read the `CLIENT_ID` environment variable to determine how to identify itself to ArcGIS Online when performing OAuth authentication. You can either define a global environment variable on your system with something like the following (which you may prefer to add to your `.profile` or equivalent):
+
+     $ export CLIENT_ID='<Client ID from ArcGIS Online>'
+     
+before running esri-gnip-loader with:
+     
+     $ node app
+
+or run esri-gnip-loader with an environment variable override:
 
      $ CLIENT_ID='<Client ID from ArcGIS Online>' node app
 
@@ -151,7 +159,7 @@ The esri-gnip-loader can be deployed directly to Heroku as-is. However, to make 
 
 See [here](https://devcenter.heroku.com/articles/getting-started-with-nodejs#introduction) for instructions on deploying a node app to Heroku, but in short, here's what you need to cover:
 
-1. Create a new Heroku App with 1 Dyno.
+1. Create a new Heroku App with 1 Dyno (see [below](#only-use-1-dyno-on-heroku)).
 2. Create a Git Remote in your local copy of this repo, pointing at your Heroku App's git URL.
 3. Create an ArcGIS Online Application (see [above](#configuring-oauth-and-arcgis-online)).
 4. Configure the `CLIENT_ID` environment variable for your Heroku App.
@@ -205,13 +213,16 @@ While `development` and `production` are the only recognized values, you can tri
 ### Security and cookies
 In `development` mode only, the Gnip password is stored in a browser cookie (see above).
 
+### Only use 1 Dyno on Heroku
+Providing feedback while records are queried and pushed relies on maintaining and accessing state on the server. State is stored in in-memory session state. Using more than 1 Dyno could mean that session state cannot be retrieved for a given progress-update request, which would cause an error in the HTML App. Note, the query-and-push would eventually complete and succeed, but it will not be possible to get feedback on its progress.
+
 ## Enhancements
 The following enhancements are planned:
 
 * Make use of bucket sizes to graph estimate results.
 * Persist result reports in the browser.
 * Handle a browser refresh more gracefully while a query-and-push is happening.
-* Handle sessions in a multi-worker environment, such as Heroku. Currently the esri-gnip-loader makes use of the express-session library with a default in-memory store, which will not function correctly on Heroku with more than 1 worker.
+* Handle sessions in a multi-worker environment, such as Heroku with more than 1 Dyno (see [above](#only-use-1-dyno-on-heroku)).
 
 ## Resources
 
@@ -260,6 +271,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-A copy of the license is available in the repository's [license.txt](https://raw.github.com/Esri/quickstart-map-ios/master/license.txt) file.
+A copy of the license is available in the repository's [license.txt](license.txt) file.
 [](Esri Tags: Gnip Node.js FeatureService HTML5)
 [](Esri Language: JavaScript)
