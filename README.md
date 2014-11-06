@@ -216,6 +216,9 @@ In `development` mode only, the Gnip password is stored in a browser cookie (see
 ### Only use 1 Dyno on Heroku
 Providing feedback while records are queried and pushed relies on maintaining and accessing state on the server. State is stored in in-memory session state. Using more than 1 Dyno could mean that session state cannot be retrieved for a given progress-update request, which would cause an error in the HTML App. Note, the query-and-push would eventually complete and succeed, but it will not be possible to get feedback on its progress.
 
+### Evaluation Gnip access
+If you are interested in using this tool and do not have a Gnip account, Gnip may be able to arrange an evaluation account. Please contact me at &#110;&#102;&#117;&#114;&#110;&#101;&#115;&#115;&#032;(&#097;&#116;)&#032;&#101;&#115;&#114;&#105;&#046;&#099;&#111;&#109;.
+
 ## Enhancements
 The following enhancements are planned:
 
