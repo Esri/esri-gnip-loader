@@ -172,8 +172,12 @@ function showMappedResults(status) {
             var selSym = new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 15, null, new Color([255,255,0,0.7]));
             fLayer.setSelectionSymbol(selSym);
             fLayer.selectFeatures(selectionQuery, FeatureLayer.SELECTION_NEW, function(selectedGraphics) {
-              var env = graphicsUtils.graphicsExtent(selectedGraphics);
-              queryMap.setExtent(env, true);
+              if (selectedGraphics.length > 0) {
+                var env = graphicsUtils.graphicsExtent(selectedGraphics);
+                queryMap.setExtent(env, true);                
+              } else {
+                queryMap.setZoom(queryMap.getMinZoom());
+              }
             });
           });
         });
