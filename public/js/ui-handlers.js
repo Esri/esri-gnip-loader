@@ -176,7 +176,7 @@ function showMappedResults(status) {
                 var env = graphicsUtils.graphicsExtent(selectedGraphics);
                 queryMap.setExtent(env, true);                
               } else {
-                queryMap.setZoom(queryMap.getMinZoom());
+                queryMap.setZoom(Math.max(3,queryMap.getMinZoom()));
               }
             });
           });
