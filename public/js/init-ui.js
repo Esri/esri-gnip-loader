@@ -40,6 +40,8 @@ function loadFromCookies() {
       }
   }
 
+  __appState.targetFolder = $.cookie('targetFolder') || null;
+
   if (__appState().env === 'development') {
     var encodedPassword = $.cookie('password');
     if (encodedPassword) {

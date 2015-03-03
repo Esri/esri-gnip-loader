@@ -114,6 +114,12 @@ function setBucketSize() {
   setEstimateButtonText(units);
 }
 
+function setTargetFolder() {
+  var folderId = $(window.event.target).attr('data-folder-id'),
+      folderName = $(window.event.target).attr('data-folder-name');
+  setFolderButtonText(folderId, folderName);
+}
+
 function showQueryResults(status) {
   showResult('query', status.writeResults.successes.length + ' records written');
 

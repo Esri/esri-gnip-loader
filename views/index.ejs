@@ -46,7 +46,7 @@
         }
       }
 
-      #esriNewFSName, #esriNewFSCreate {
+      #esriNewFSName, #esriNewFSCreate, #esriNewFSFolders {
         height: 22px;
         line-height: 1;
       }
@@ -472,6 +472,11 @@
               </div>
               
               <div class="input-group input-group-sm col-sm-4 pull-right" style="display: none;" id="esriNewFSGroup">
+                <span class="input-group-btn">
+                  <button class="btn btn-default button-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="esriNewFSFolders"><span id="esriNewFSFoldersText">Loading...</span></button>
+                  <ul id='esriNewFSFoldersList' class="dropdown-menu" role="menu">
+                  </ul>
+                </span>
                 <input type="text" class="form-control" spellcheck="false" placeholder="New Feature Service" id="esriNewFSName">
                 <span class="input-group-btn">
                   <button class="btn btn-default" type="button" id="esriNewFSCreate" onClick="createFS()">Create</button>

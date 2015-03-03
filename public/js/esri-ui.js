@@ -5,7 +5,9 @@ var signInStatus = '#signInStatus',
 
 var newFSGroup = '#esriNewFSGroup',
     newFSName = '#esriNewFSName',
-    newFSButton = '#esriNewFSCreate';
+    newFSButton = '#esriNewFSCreate',
+    newFSFolders = '#esriNewFSFolders',
+    newFSTargetFolder = '#esriNewFSFoldersText';
 
 var checkFSNameAvailable = _.throttle(function () {
   var name = $(newFSName).val();
@@ -25,9 +27,11 @@ function setNewFeatureServiceUIState(enabled) {
 }
 
 function createFS() {
-  var name = $(newFSName).val();
+  var name = $(newFSName).val(),
+      folderId = $(newFSTargetFolder).attr('data-folder-id');
+
   modalSpinner('Creating feature service');
-  createFeatureService(name, function (err, data) {
+  createFeatureService(name, folderId, function (err, data) {
     stopSpinner();
 
     if (err) {
@@ -46,12 +50,44 @@ function createFS() {
   });
 }
 
+function listFolders() {
+  getFolderList(function (err, data) {
+    var listRoot = $('#esriNewFSFoldersList');
+    listRoot.empty();
+    listRoot.append($('<li></li>').append($('<a>Root (/)</a>').attr({
+      onClick: 'setTargetFolder()'
+    })));
+    var targetFolder = __appState.targetFolder || '0',
+        targetItem = null;
+    if (!err) {
+      for (var i = 0; i < data.length - 1; i++) {
+        var newItem = $('<li></li>');
+        newItem.append($('<a>' + data[i].title + '</a>').attr({
+          'data-folder-id': data[i].id,
+          'data-folder-name': data[i].title,
+          onClick: 'setTargetFolder()'
+        }));
+        listRoot.append(newItem);
+        if (data[i].id === targetFolder) {
+          targetItem = data[i];
+        }
+      };
+    }
+    targetItem = targetItem || {
+      id: '0',
+      title: ''
+    };
+    setFolderButtonText(targetItem.id, targetItem.title);
+  });
+}
+
 function setUILoggedIn() {
   require(['esri/arcgis/Portal'], function (arcgisPortal) {
     new arcgisPortal.Portal(__appState().oauthInfo.portalUrl).signIn()
       .then(function (portalUser) {
         __appState().portalUser = portalUser;
         updateLoginStatus('');
+        listFolders();
         $(signOutLabel).text(portalUser.username);
         $(signInButton).fadeOut('fast', function () {
           $(signOutButton).fadeIn('slow', function () {

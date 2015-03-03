@@ -99,6 +99,16 @@ function setEstimateButtonText(units) {
   $('#gnipEstimateShortcut').text('Estimate (' + readableBucketSize + ')').attr('data-bucketsize', units);
 }
 
+function setFolderButtonText(id, name) {
+  $('#esriNewFSFoldersText').text((name || '') + ' /').removeAttr('data-folder-id').attr('data-folder-id', id);
+  __appState.targetFolder = id;
+  if (id) {
+    $.cookie('targetFolder', id, {expires: 90});
+  } else {
+    $.removeCookie('targetFolder');
+  }
+}
+
 function makeClearable(inputIds) {
   if ({}.toString.call(inputIds) !== '[object Array]') {
     inputIds = [inputIds];
