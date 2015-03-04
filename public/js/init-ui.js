@@ -24,6 +24,14 @@ function setupUIAfterLoad() {
 
   setDateRange('#gnipFromDate');
   setDateRange('#gnipToDate');
+
+  $('#queryMapTab').on('show.bs.tab', function(e) {
+    sizeMapTab();
+  });
+
+  $(window).resize(function(e) {
+    sizeMapTab();
+  });
 }
 
 function loadFromCookies() {

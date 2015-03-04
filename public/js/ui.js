@@ -1,4 +1,10 @@
-function showModal(modalName) {
+function showModal(modalName, requestData) {
+  var queryText = getQueryText(requestData);
+  if (queryText === '') {
+    $('#' + modalName + 'ModalLabelSuffix').hide();  
+  } else {
+    $('#' + modalName + 'ModalLabelSuffix').show().find('span').text(queryText);
+  }
   $('#' + modalName + 'Progress').show();
   $('#' + modalName + 'Result').hide();
   $('#' + modalName + 'Map').hide();
@@ -6,6 +12,15 @@ function showModal(modalName) {
     show: true,
     backdrop: 'static'
   });
+}
+
+function getQueryText(requestData) {
+  if (requestData !== undefined &&
+      requestData.hasOwnProperty('query')) {
+    return requestData.query;
+  } else {
+    return '';
+  }
 }
 
 function showResult(modalName, value) {
