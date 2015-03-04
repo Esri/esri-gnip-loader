@@ -24,6 +24,14 @@ function setupUIAfterLoad() {
 
   setDateRange('#gnipFromDate');
   setDateRange('#gnipToDate');
+
+  $('#queryMapTab').on('show.bs.tab', function(e) {
+    sizeMapTab();
+  });
+
+  $(window).resize(function(e) {
+    sizeMapTab();
+  });
 }
 
 function loadFromCookies() {
@@ -39,6 +47,8 @@ function loadFromCookies() {
         setEstimateButtonText(params.bucketSize);
       }
   }
+
+  __appState.targetFolder = $.cookie('targetFolder') || null;
 
   if (__appState().env === 'development') {
     var encodedPassword = $.cookie('password');
