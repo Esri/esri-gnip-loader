@@ -20,6 +20,9 @@
     "request": "~2.40.0",
     "response-time": "~2.0.1"
   },
+  "engines" : { 
+    "node" : ">=0.10.3 <0.11"
+  },
   "author": {
     "name": "Nick Furness"
   },
