@@ -153,6 +153,17 @@ function setQueryResultsTabHeadings(status) {
   $('#queryErrorTab .badge').text(errCount > 0?errCount:'');
 }
 
+function setAppropriateProtocol(url) {
+  var forceToHTTPS = (window.location.protocol === 'https:');
+
+  if (forceToHTTPS && 
+      url.toLowerCase().indexOf('http:') === 0) {
+    return url.replace('http:','https:');
+  }
+
+  return url;
+}
+
 function showMappedResults(status) {
   var width = $(window).width(),
       zoomLevel = width < 1350?2:3;
@@ -174,7 +185,7 @@ function showMappedResults(status) {
       'dojo/domReady!'], 
       function (FeatureLayer, Query, graphicsUtils, InfoTemplate, ClusterFeatureLayer, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, PictureMarkerSymbol, ClassBreaksRenderer, Color) {
         function addClusterLayer(targetMap) {
-          var fsURL = status.featureServiceUrl;
+          var fsURL = setAppropriateProtocol(status.featureServiceUrl);
           console.log('Adding to map: ' + fsURL);
 
           var infoTemplate = new InfoTemplate("Tweets", 
