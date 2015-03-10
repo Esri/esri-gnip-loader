@@ -28,22 +28,25 @@ function addClusterLayer(status, name, targetMap) {
     'esri/graphicsUtils', 
     'esri/InfoTemplate',
     '/js/cluster-layer/clusterfeaturelayer.js',
-    "esri/renderers/SimpleRenderer",
-    "esri/symbols/SimpleMarkerSymbol",
-    "esri/symbols/SimpleLineSymbol",
-    "esri/symbols/SimpleFillSymbol",
-    "esri/symbols/PictureMarkerSymbol",
-    "esri/renderers/ClassBreaksRenderer",
-    "dojo/_base/Color",
+    'esri/renderers/SimpleRenderer',
+    'esri/symbols/SimpleMarkerSymbol',
+    'esri/symbols/SimpleLineSymbol',
+    'esri/symbols/SimpleFillSymbol',
+    'esri/symbols/PictureMarkerSymbol',
+    'esri/renderers/ClassBreaksRenderer',
+    'dojo/_base/Color',
     'dojo/domReady!'], 
     function (FeatureLayer, Query, graphicsUtils, InfoTemplate, ClusterFeatureLayer, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, PictureMarkerSymbol, ClassBreaksRenderer, Color) {
       var fsURL = setAppropriateProtocol(status.featureServiceUrl);
       console.log('Adding to map: ' + fsURL);
 
-      var infoTemplate = new InfoTemplate("Tweets", 
-        "<p><a target='_blank' href='${actor_link}'>${actor_displayName}</a><span class='pull-right'>${postedTime:DateFormat}</span></p><p>${body}</p><p>Retweeted: ${retweetCount} Favorites: ${favoritesCount}</p><p></p><div class='popup-btn-container'><a target='_blank' href='${link}' role='button' class='btn btn-default btn-sm'><span class='glyphicon glyphicon-envelope'></span> View Tweet</a></div>");
+      var infoTemplate = new InfoTemplate("Tweet", 
+        '<p><a target="_blank" href="${actor_link}">${actor_displayName}</a><span class="pull-right">${postedTime:DateFormat}</span></p>' + 
+        '<p>${body}</p>' + 
+        '<p>Retweeted: ${retweetCount} Favorites: ${favoritesCount}</p>' + 
+        '<p></p><div class="popup-btn-container"><a target="_blank" href="${link}" role="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-envelope"></span> View Tweet</a></div>');
 
-      var defaultSym = new SimpleMarkerSymbol("circle", 16,
+      var defaultSym = new SimpleMarkerSymbol('circle', 16,
                        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([87,172,238, 0.55]), 3),
                        new Color([255, 255, 255, 1]));
 
@@ -53,7 +56,6 @@ function addClusterLayer(status, name, targetMap) {
               'id': name,
               'labelColor': '#fff',
               'resolution': targetMap.extent.getWidth() / targetMap.width,
-              //'singleColor': '#888',
               'singleSymbol': defaultSym,
               'singleTemplate': infoTemplate,
               'useDefaultSymbol': false,
@@ -63,17 +65,17 @@ function addClusterLayer(status, name, targetMap) {
               outFields: ['activity_id', 'postedTime', 'link', 'actor_displayName', 'actor_link', 'retweetCount', 'favoritesCount', 'body']              
           });
 
-      var renderer = new ClassBreaksRenderer(defaultSym, "clusterCount"),
-          small = new SimpleMarkerSymbol("circle", 25,
+      var renderer = new ClassBreaksRenderer(defaultSym, 'clusterCount'),
+          small = new SimpleMarkerSymbol('circle', 25,
                   new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([87,172,238,0.5]), 15),
                   new Color([87,172,238,0.75])),
-          medium = new SimpleMarkerSymbol("circle", 40,
+          medium = new SimpleMarkerSymbol('circle', 40,
                   new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([87,172,238,0.5]), 15),
                   new Color([87,172,238,0.75])),
-          large = new SimpleMarkerSymbol("circle", 60,
+          large = new SimpleMarkerSymbol('circle', 60,
                   new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([87,172,238,0.5]), 15),
                   new Color([87,172,238,0.75])),
-          xlarge = new SimpleMarkerSymbol("circle", 80,
+          xlarge = new SimpleMarkerSymbol('circle', 80,
                   new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([87,172,238,0.5]), 15),
                   new Color([87,172,238,0.75]));
 

@@ -29,8 +29,9 @@ function showResult(modalName, value) {
   $('#' + modalName + 'Map').fadeIn('slow');
 }
 
-function setProgress(modalName, value) {
-  $('#' + modalName + 'Progress > .progress-bar').css('width',Math.floor(value) + '%');
+function setProgress(selector, value, msg) {
+  $('#' + selector + 'Progress > .progress-bar').css('width',Math.floor(value) + '%');
+  $('#' + selector + 'Progress span').text(msg);
 }
 
 function modalSpinner(message) {

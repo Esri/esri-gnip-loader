@@ -123,7 +123,7 @@
       }
 
       #gnipPasswordModal {
-        top: 200px;
+        padding-top: 200px;
       }
 
       #gnipUsernameSolo {
@@ -256,9 +256,16 @@
           <div class="modal-body">
 
             <!-- Query in progress -->
-            <div id="queryProgress" class="progress">
-              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                <span>Querying…</span>
+            <div id="queryProgress">
+              <div id="readProgress" class="progress">
+                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span>0%</span>
+                </div>
+              </div>
+              <div id="writeProgress" class="progress">
+                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                  <span>0%</span>
+                </div>
               </div>
             </div>
 
