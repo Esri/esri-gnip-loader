@@ -75,6 +75,7 @@ function queryAndPush() {
           if (queryStatusData.status === 'finished') {
             console.log('Finished!');
             window.clearInterval(pollId);
+            __appState().lastQueryResult = queryStatusData;
             showQueryResults(queryStatusData);
           }
         })
