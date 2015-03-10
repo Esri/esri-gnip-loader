@@ -43,8 +43,8 @@ function addClusterLayer(status, name, targetMap) {
       var infoTemplate = new InfoTemplate("Tweet", 
         '<p><a target="_blank" href="${actor_link}">${actor_displayName}</a><span class="pull-right">${postedTime:DateFormat}</span></p>' + 
         '<p>${body}</p>' + 
-        '<p>Retweeted: ${retweetCount} Favorites: ${favoritesCount}</p>' + '
-        <p></p><div class="popup-btn-container"><a target="_blank" href="${link}" role="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-envelope"></span> View Tweet</a></div>');
+        '<p>Retweeted: ${retweetCount} Favorites: ${favoritesCount}</p>' + 
+        '<p></p><div class="popup-btn-container"><a target="_blank" href="${link}" role="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-envelope"></span> View Tweet</a></div>');
 
       var defaultSym = new SimpleMarkerSymbol('circle', 16,
                        new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID, new Color([87,172,238, 0.55]), 3),

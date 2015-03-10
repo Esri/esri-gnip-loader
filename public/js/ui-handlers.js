@@ -28,7 +28,8 @@ function queryAndPush() {
 
   $.post('/pushQuery', requestData, function (data) {
     console.log(data);
-    setProgress('query', data.writeProgress);
+    setProgress('read', data.readProgress);
+    setProgress('write', data.writeProgress);
 
     var queryId = data.id;
 
@@ -41,7 +42,36 @@ function queryAndPush() {
           $('#queryProgressAlert').fadeOut();
           console.log(queryStatusData);
 
-          setProgress('query', queryStatusData.writeProgress);
+          var lastEstimate = __appState().lastEstimate,
+              requestQuery = _.pick(requestData, ['query','fromDate','toDate']),
+              lastEstimateValid = (lastEstimate !== undefined && 
+                                  _.isMatch(lastEstimate.request, requestQuery)),
+              readCount = queryStatusData.readCount,
+              writeCount = queryStatusData.writeCount,
+              totalCount = readCount,
+              readProgress = queryStatusData.readProgress,
+              writeProgress = queryStatusData.writeProgress;
+
+          var readMsg = readCount + ' records',
+              writeMsg = writeCount + ' of ' + readCount + ' features';
+          if (readProgress < 100 && lastEstimateValid && lastEstimate.count > 0) {
+            // We can do better than the server since we know the last estimate.
+            totalCount = lastEstimate.count;
+            readProgress = 100 * readCount / totalCount;
+            writeProgress = 100 * writeCount / totalCount;
+            readMsg = readCount + ' of ~' + totalCount;
+          }
+
+          if (readProgress == 100) {
+            readMsg = 'Complete: ' + readCount + ' records read';
+          }
+
+          if (writeProgress == 100) {
+            writeMsg = 'Complete: ' + writeCount + ' features written';
+          }
+
+          setProgress('read', readProgress, readMsg);
+          setProgress('write', writeProgress, writeMsg);
           if (queryStatusData.status === 'finished') {
             console.log('Finished!');
             window.clearInterval(pollId);
@@ -101,6 +131,10 @@ function estimateCount() {
     }
     $('#countResult').text(recordCount + ' tweets across ' + data.buckets.length + ' ' + data.bucketSize + 's');
     showResult('count');
+    __appState().lastEstimate = {
+      request: requestData,
+      count: recordCount
+    };
   }, "json").fail(function(err) {
     console.error(err.responseJSON);
     $('#countProgress').hide();
